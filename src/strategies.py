@@ -4,15 +4,18 @@ strategies.py
 Patrón de diseño STRATEGY.
 
 Define una interfaz común (`ClassifierStrategy`) para todos los algoritmos de
-clasificación. Cada algoritmo concreto (MLP, regresión logística) la implementa,
-de modo que son INTERCAMBIABLES sin modificar el resto del sistema. Añadir un
-nuevo modelo (p. ej. SVM) solo requiere crear una nueva subclase.
+clasificación. Cada algoritmo concreto (MLP, regresión logística, árbol de
+decisión, random forest) la implementa, de modo que son INTERCAMBIABLES sin
+modificar el resto del sistema. Añadir un nuevo modelo solo requiere crear una
+nueva subclase y registrarla en la fábrica.
 """
 
 from abc import ABC, abstractmethod
 
 from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 
 class ClassifierStrategy(ABC):
@@ -49,6 +52,37 @@ class MLPStrategy(ClassifierStrategy):
             alpha=1e-4,                   # regularización L2
             max_iter=600,
             random_state=42,
+        )
+
+    def train(self, X, y):
+        self.model.fit(X, y)
+        return self
+
+
+class DecisionTreeStrategy(ClassifierStrategy):
+    """Clasificador basado en un Árbol de Decisión."""
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Árbol de Decisión"
+        self.model = DecisionTreeClassifier(max_depth=5, random_state=42)
+
+    def train(self, X, y):
+        self.model.fit(X, y)
+        return self
+
+
+class RandomForestStrategy(ClassifierStrategy):
+    """Clasificador basado en un bosque aleatorio (Random Forest)."""
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Random Forest"
+        self.model = RandomForestClassifier(
+            n_estimators=200,
+            max_depth=None,
+            random_state=42,
+            n_jobs=-1,
         )
 
     def train(self, X, y):
