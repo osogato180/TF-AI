@@ -3,8 +3,9 @@ main.py
 -------
 Punto de entrada del proyecto de clasificación de tumores mamarios.
 
-Ejecuta el Perceptrón Multicapa y, como referencia, el modelo base de regresión
-logística. Imprime las métricas y genera las figuras en la carpeta 'figuras/'.
+Ejecuta el Perceptrón Multicapa (modelo principal) y, como comparación, la
+regresión logística, el árbol de decisión y el random forest. Imprime las
+métricas y genera las figuras en la carpeta 'figuras/'.
 
 Uso:
     python main.py
@@ -37,10 +38,15 @@ def main():
     print("\nReporte por clase (MLP):")
     print(pipe_mlp.last_report)
 
-    # Modelo base de comparación: Regresión Logística
+    # Modelos de comparación
     pipe_lr = Pipeline(model_name="logistic")
-    metricas_lr = pipe_lr.run(make_plots=False)
-    imprimir_resultados("Regresión Logística (base)", metricas_lr)
+    imprimir_resultados("Regresión Logística (base)", pipe_lr.run(make_plots=False))
+
+    pipe_tree = Pipeline(model_name="tree")
+    imprimir_resultados("Árbol de Decisión", pipe_tree.run(make_plots=False))
+
+    pipe_forest = Pipeline(model_name="forest")
+    imprimir_resultados("Random Forest", pipe_forest.run(make_plots=False))
 
     print("\nFiguras generadas en la carpeta 'figuras/'.")
 
